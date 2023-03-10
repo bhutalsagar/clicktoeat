@@ -137,7 +137,7 @@ public class ProductServiceImpl {
 	
 	public ProductDTO editProduct(int productId,ProductDTO productDto)
 	{
-		Product product = productDao.getById(productId);
+		Product product = productDao.findById(productId).get();
 		if(product != null)
 		{
 			product.setCategory(productDto.getCategory());
@@ -160,7 +160,7 @@ public class ProductServiceImpl {
 			for (SubCategory sub : subCategoryList) {
 				if(sub.getCrustType().equals(subCategoryDto.getdishName()) && sub.getSize().equals(subCategoryDto.getSize()))
 				{
-					SubCategory subCategory = subCategoryDao.getById(sub.getSubCategoryId());
+					SubCategory subCategory = subCategoryDao.findById(sub.getSubCategoryId()).get();
 					subCategory.setPrice(subCategoryDto.getPrice());
 					subCategory = subCategoryDao.save(subCategory);
 					return Collections.singletonMap("updated Id", subCategory.getSubCategoryId());

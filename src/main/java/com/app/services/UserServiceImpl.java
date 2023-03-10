@@ -99,7 +99,7 @@ public class UserServiceImpl {
 	public Map<String, Object> updateEmployeeDetails(int userId,UserAddressDTO userAddressDto)
 	{
 			
-		User user = userDao.getById(userId);
+		User user = userDao.findById(userId).get();
 		if(user != null )
 		{
 			userAddressDto.setUserId(userId);
@@ -141,7 +141,7 @@ public class UserServiceImpl {
 	
 	public Map<String, Object> addAddress(int userId, AddressDTO addressDto){
 		System.out.println("In add address block");
-		User user = userDao.getById(userId);
+		User user = userDao.findById(userId).get();
 		
 		if(user != null ) {
 			Address add =addressDao.findByUserId(userId);
@@ -185,7 +185,7 @@ public class UserServiceImpl {
 	
 	public UserDTO getUserDetails(int userId)
 	{
-		User user = userDao.getById(userId);
+		User user = userDao.findById(userId).get();
 		
 		if(user != null)
 			return converter.toUserDto(user);
@@ -195,7 +195,7 @@ public class UserServiceImpl {
 	
 	public Map<String,Object> updateUser(int userId,UserDTO userDto)
 	{
-		User user = userDao.getById(userId);
+		User user = userDao.findById(userId).get();
 		if(user != null)
 		{
 			user.setFirstName(userDto.getFirstName());

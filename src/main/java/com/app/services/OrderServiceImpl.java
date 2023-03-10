@@ -62,8 +62,8 @@ public class OrderServiceImpl {
 	private ICartDao cartDao;
 	@Autowired
 	private ICartDetailDao cartDetailDao;
-	@Autowired
-	private JavaMailSender sender;
+//	@Autowired
+//	private JavaMailSender sender;
 	
 	public List<OrderDTO> getAllOrders()
 	{
@@ -138,12 +138,12 @@ public class OrderServiceImpl {
 	
 	public Map<String,Object> assignDeliveryBoy(AssignOrderDTO assignOrderDto)
 	{
-		Order order = orderDao.getById(assignOrderDto.getOrderId());
+		Order order = orderDao.findById(assignOrderDto.getOrderId()).get();
 		if(assignOrderDao.findByOrderId(assignOrderDto.getOrderId()) == null)
 		{
 			AssignOrder assign = new AssignOrder();
 			assign.setOrder(order);
-			User emp =  userDao.getById(assignOrderDto.getUserId());
+			User emp =  userDao.findById(assignOrderDto.getUserId()).get();
 			emp.setIsFree(false);
 			assign.setUser(emp);
 			assign = assignOrderDao.save(assign);
@@ -199,7 +199,7 @@ public class OrderServiceImpl {
 
 	public Map<String, Object> saveOrder(OrderDTO orderDto)
 	{
-		User user = userDao.getById(orderDto.getUser().getUserId());
+		User user = userDao.findById(orderDto.getUser().getUserId()).get();
 		Order order = new Order();
 		order.setPaymentMode(orderDto.getPaymentMode());
 		order.setStatusType("Placed");
@@ -223,7 +223,7 @@ public class OrderServiceImpl {
 				OrderDetail orderDetail = new OrderDetail();
 				if(cd.getProductId() != 0)
 				{
-					Product product = productDao.getById(cd.getProductId());
+					Product product = productDao.findById(cd.getProductId()).get();
 					orderDetail.setProduct(product);
 					
 					sb.append("\n"+product.getProductName()+" = " + "Rs. "+cd.getPrice() + "( Qty. "+cd.getQuantity()+")");
@@ -251,7 +251,7 @@ public class OrderServiceImpl {
 			mesg.setText(message);
 			mesg.setFrom("Pizzeria_pizza_ordering");
 			mesg.setSentDate(new Date());
-			sender.send(mesg);
+//			sender.send(mesg);
 			
 			
 		return Collections.singletonMap("inserted id", order.getOrderId());
@@ -264,8 +264,8 @@ public class OrderServiceImpl {
 		Feedback feedback = converter.toFeedbackEntity(feedbackDto);
 		//Feedback feedback = new Feedback();
 		//feedbackDto.getOrderId();
-		User user = userDao.getById(feedbackDto.getUserId());
-		Order order = orderDao.getById(feedbackDto.getOrderId());
+		User user = userDao.findById(feedbackDto.getUserId()).get();
+		Order order = orderDao.findById(feedbackDto.getOrderId()).get();
 		
 		feedback.setOrder(order);
 		feedback.setUser(user);
@@ -375,7 +375,7 @@ public class OrderServiceImpl {
 	{
 		double totalAmount = 0;
 		int totalQuantity = 0;
-		Cart cart = cartDao.getById(cartId);
+		Cart cart = cartDao.findById(cartId).get();
 		List<CartDetail> cartList = cartDetailDao.findByCartId(cartId);
 		for (CartDetail cd1 : cartList) {
 			totalAmount = totalAmount + (cd1.getPrice() * cd1.getQuantity());	
@@ -392,7 +392,7 @@ public class OrderServiceImpl {
 	{
 		
 		
-		CartDetail cartDetail = cartDetailDao.getById(cartDetailId);
+		CartDetail cartDetail = cartDetailDao.findById(cartDetailId).get();
 		cartDetail.setQuantity(cartDetail.getQuantity() + 1);
 		
 		int cartId = updateQuantityAndAmount(cartDetail.getCartId());
@@ -405,7 +405,7 @@ public class OrderServiceImpl {
 	{
 		
 		
-		CartDetail cartDetail = cartDetailDao.getById(cartDetailId);
+		CartDetail cartDetail = cartDetailDao.findById(cartDetailId).get();
 		if(cartDetail.getQuantity() > 1)
 		{
 			cartDetail.setQuantity(cartDetail.getQuantity() - 1);
@@ -419,7 +419,7 @@ public class OrderServiceImpl {
 	
 	public void deleteFromCart(int cartDetailId)
 	{
-		CartDetail cartDetail = cartDetailDao.getById(cartDetailId);
+		CartDetail cartDetail = cartDetailDao.findById(cartDetailId).get();
 		cartDetailDao.delete(cartDetail);
 		updateQuantityAndAmount(cartDetail.getCartId());
 		
@@ -430,7 +430,7 @@ public class OrderServiceImpl {
 	{
 		
 		
-		CartDetail cartDetail = cartDetailDao.getById(cartDetailId);
+		CartDetail cartDetail = cartDetailDao.findById(cartDetailId).get();
 		cartDetail.setQuantity(quantity);
 		
 		int cartId = updateQuantityAndAmount(cartDetail.getCartId());
@@ -441,7 +441,7 @@ public class OrderServiceImpl {
 	
 	public Map<String,Object> updateOrderStatus(int orderId,OrderDTO orderDto)
 	{
-		Order order = orderDao.getById(orderId);
+		Order order = orderDao.findById(orderId).get();
 		order.setStatusType(orderDto.getStatusType());
 		order = orderDao.save(order);
 		if(orderDto.getStatusType().equals("Delivered"))
@@ -449,7 +449,7 @@ public class OrderServiceImpl {
 			AssignOrder assignOrder = assignOrderDao.findByOrderId(orderId);
 			if(assignOrder !=null) 
 			{
-				User user = userDao.getById(assignOrder.getUser().getUserId());
+				User user = userDao.findById(assignOrder.getUser().getUserId()).get();
 //				if(user!=null)
 //				{
 					System.out.println(user);
@@ -478,7 +478,7 @@ public class OrderServiceImpl {
 	
 	public String getOrderDetails(int orderId)
 	{
-		Order order = orderDao.getById(orderId);
+		Order order = orderDao.findById(orderId).get();
 			return order.getStatusType();
 	}
 	

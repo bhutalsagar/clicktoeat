@@ -32,8 +32,8 @@ public class OrderController {
 
 	@Autowired
 	private OrderServiceImpl orderService;
-	@Autowired
-	private JavaMailSender sender;
+//	@Autowired
+//	private JavaMailSender sender;
 	
 	//get all orders in admin orders page
 	@GetMapping("/order/getall-orders")
